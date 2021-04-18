@@ -1,8 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+
+	"github.com/itscharlieliu/chat-server/pkg"
+)
 
 func main() {
-	fmt.Println("Hello world")
 
+	http.HandleFunc("/chat", pkg.WebsocketHandler)
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
