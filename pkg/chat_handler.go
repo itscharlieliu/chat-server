@@ -5,7 +5,7 @@ import "fmt"
 func ChatHandler(c chan []byte) {
 	for {
 		str := <-c
-		fmt.Println(str)
+		fmt.Println(string(str))
 		fmt.Println("End msg")
 	}
 }

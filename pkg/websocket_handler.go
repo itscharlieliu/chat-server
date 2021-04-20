@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -13,8 +12,8 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request, c chan []byte) {
-	fmt.Println("GOT HERE")
+func WebsocketHandler(w http.ResponseWriter, r *http.Request, channel chan []byte) {
+	log.Println("Connected")
 
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		// TODO Sanitize origin
@@ -33,7 +32,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, c chan []byte) {
 			log.Println(err)
 			return
 		}
-		c <- p
+		channel <- p
 		err = conn.WriteMessage(messageType, p)
 		if err != nil {
 			log.Println(err)
