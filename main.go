@@ -9,7 +9,11 @@ import (
 
 func main() {
 
-	http.HandleFunc("/chat", pkg.WebsocketHandler)
+	c := make(chan []byte)
+
+	http.HandleFunc("/chat", func(rw http.ResponseWriter, r *http.Request) { pkg.WebsocketHandler(rw, r, c) })
+
+	go pkg.ChatHandler(c)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
