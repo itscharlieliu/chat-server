@@ -9,11 +9,12 @@ import (
 
 func main() {
 
-	channel := make(chan []byte)
+	msgChannel := make(chan []byte)
+	connChannel := make(chan pkg.ThreadsafeConn)
 
-	http.HandleFunc("/chat", func(rw http.ResponseWriter, r *http.Request) { pkg.WebsocketHandler(rw, r, channel) })
+	http.HandleFunc("/chat", func(rw http.ResponseWriter, r *http.Request) { pkg.WebsocketHandler(rw, r, msgChannel) })
 
-	go pkg.ChatHandler(channel)
+	go pkg.ChatHandler(msgChannel)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
