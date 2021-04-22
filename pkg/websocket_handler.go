@@ -39,12 +39,18 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
 	}()
 
 	for {
-		_, p, err := conn.ReadMessage()
+		messageType, bytes, err := conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		hub.Send <- p
+
+		msg := Message{
+			bytes:       bytes,
+			messageType: messageType,
+		}
+
+		hub.Send <- msg
 		// // channel <- p
 		// err = conn.WriteMessage(messageType, p)
 		// if err != nil {

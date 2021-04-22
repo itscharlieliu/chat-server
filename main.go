@@ -11,7 +11,7 @@ func main() {
 
 	hub := pkg.ClientHub{
 		ClientMap:  make(map[*pkg.Client]bool),
-		Send:       make(chan []byte),
+		Send:       make(chan pkg.Message),
 		Register:   make(chan *pkg.Client),
 		Deregister: make(chan *pkg.Client),
 	}
