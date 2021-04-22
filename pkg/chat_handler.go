@@ -1,27 +1,34 @@
 package pkg
 
 import (
+	"log"
+
 	"github.com/gorilla/websocket"
 )
 
-type ThreadsafeConn struct {
-	conn websocket.Conn
-	msg  chan []byte
+// type ThreadsafeConn struct {
+// 	conn websocket.Conn
+// }
+
+type Client struct {
+	hub  *ClientHub
+	conn *websocket.Conn
+	test string
 }
 
-type ConnHub struct {
-	connMap map[*ThreadsafeConn]bool
+type ClientHub struct {
+	ClientMap  map[*Client]bool
+	Send       chan []byte
+	Register   chan *Client
+	Deregister chan *Client
 }
 
-func ChatHandler(msgChannel chan []byte, connChannel chan ThreadsafeConn) {
-
-	hub := connHub{connMap: make(map[*ThreadsafeConn]bool)}
+func ChatHandler(hub *ClientHub) {
 
 	for {
-		msg := <-msgChannel
-
-		for threadsafeConn := range hub.connMap {
-			threadsafeConn.conn.WriteMessage(1, msg)
+		select {
+		case client := <-hub.Register:
+			log.Printf(client.test)
 		}
 	}
 }

@@ -12,7 +12,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request, channel chan []byte) {
+func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
 	log.Println("Connected")
 
 	upgrader.CheckOrigin = func(r *http.Request) bool {
@@ -26,13 +26,21 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, channel chan []byt
 		return
 	}
 
+	client := Client{
+		hub:  hub,
+		conn: conn,
+		test: "hello",
+	}
+
+	client.hub.Register <- &client
+
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		channel <- p
+		// channel <- p
 		err = conn.WriteMessage(messageType, p)
 		if err != nil {
 			log.Println(err)
