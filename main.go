@@ -16,7 +16,7 @@ func main() {
 		Deregister: make(chan *pkg.Client),
 	}
 
-	http.HandleFunc("/chat", func(rw http.ResponseWriter, r *http.Request) { pkg.WebsocketHandler(rw, r, &hub) })
+	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) { pkg.WebsocketHandler(rw, r, &hub) })
 
 	go pkg.ChatHandler(&hub)
 

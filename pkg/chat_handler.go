@@ -13,7 +13,6 @@ import (
 type Client struct {
 	hub  *ClientHub
 	conn *websocket.Conn
-	test string
 }
 
 type ClientHub struct {
@@ -28,7 +27,17 @@ func ChatHandler(hub *ClientHub) {
 	for {
 		select {
 		case client := <-hub.Register:
-			log.Printf(client.test)
+			hub.ClientMap[client] = true
+		case client := <-hub.Deregister:
+			delete(hub.ClientMap, client)
+		case msg := <-hub.Send:
+			for client := range hub.ClientMap {
+				err := client.conn.WriteMessage(1, msg)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+			}
 		}
 	}
 }

@@ -29,22 +29,27 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
 	client := Client{
 		hub:  hub,
 		conn: conn,
-		test: "hello",
 	}
 
 	client.hub.Register <- &client
 
+	defer func() {
+		client.hub.Deregister <- &client
+		client.conn.Close()
+	}()
+
 	for {
-		messageType, p, err := conn.ReadMessage()
+		_, p, err := conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		// channel <- p
-		err = conn.WriteMessage(messageType, p)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		hub.Send <- p
+		// // channel <- p
+		// err = conn.WriteMessage(messageType, p)
+		// if err != nil {
+		// 	log.Println(err)
+		// 	return
+		// }
 	}
 }
