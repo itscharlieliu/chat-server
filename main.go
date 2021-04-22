@@ -20,5 +20,6 @@ func main() {
 
 	go pkg.ChatHandler(&hub)
 
+	log.Println("Listening...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

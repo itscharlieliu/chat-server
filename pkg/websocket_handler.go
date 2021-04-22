@@ -3,6 +3,7 @@ package pkg
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -13,11 +14,16 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
-	log.Println("Connected")
-
 	upgrader.CheckOrigin = func(r *http.Request) bool {
-		// TODO Sanitize origin
-		return true
+		// Allow connections on local network
+		if strings.HasPrefix(r.RemoteAddr, "192.168.1.") {
+			return true
+		}
+		// Allow connections on localhost
+		if strings.HasPrefix(r.RemoteAddr, "127.0.0.1") || strings.HasPrefix(r.RemoteAddr, "localhost") {
+			return true
+		}
+		return false
 	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -51,11 +57,5 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
 		}
 
 		hub.Send <- msg
-		// // channel <- p
-		// err = conn.WriteMessage(messageType, p)
-		// if err != nil {
-		// 	log.Println(err)
-		// 	return
-		// }
 	}
 }
