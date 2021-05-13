@@ -49,8 +49,3 @@ func ChatHandler(hub *ClientHub) {
 		}
 	}
 }
-
-// TODO
-// https://github.com/gorilla/websocket/blob/master/examples/chat/hub.go
-// https://stackoverflow.com/questions/32693931/what-is-the-benefit-of-sending-to-a-channel-by-using-select-in-go
-// https://stackoverflow.com/questions/31532652/go-websocket-send-all-clients-a-message

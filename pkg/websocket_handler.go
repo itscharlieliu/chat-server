@@ -1,11 +1,13 @@
 package pkg
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"github.com/itscharlieliu/chat-server/api"
 )
 
 var upgrader = websocket.Upgrader{
@@ -56,6 +58,23 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, hub *ClientHub) {
 			messageType: messageType,
 		}
 
-		hub.Send <- msg
+		// Process the message
+		switch messageType {
+		case 1:
+			{
+				// Plaintext message
+				fmt.Println("Plaintext message")
+				hub.Send <- msg
+				break
+			}
+		case 2:
+			{
+				// Binary message
+				fmt.Println("Binary message")
+				api.BytesToFile(bytes)
+				break
+			}
+		}
+
 	}
 }
